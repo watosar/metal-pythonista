@@ -8,31 +8,24 @@ load_framework('Metal')
 
 MTLCompileOptions, MTLRenderPipelineDescriptor, MTLRenderPipelineReflection = map(ObjCClass,('MTLCompileOptions','MTLRenderPipelineDescriptor', 'MTLRenderPipelineReflection'))
 
-             
+s_time = None
 
 device = None
 pipeline_state = None
 command_queue = None
-viewport_size = [300.0,300.0]
+viewport_size = [750.0,750.0]
 
-triangle_position = [
-    [ 250.0,-250.0],
-    [-250.0,-250.0],
-    [   0.0, 250.0]
-]
-
-triangle_color = [
-    [1.0,0.0,0.0,1.0],
-    [0.0,1.0,0.0,1.0],
-    [0.0,0.0,1.0,1.0]
-]
+time_buffer = None
 
 flg = False
+
 def get_shader_source():
     with open('shader.metal.js', 'r', encoding='utf-8') as f:
         shader = f.read()
     return shader
-
+    
+def get_time():
+    return time.time()-s_time
 
 def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, _view, _size):
     global viewport_size
@@ -41,8 +34,10 @@ def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, _view, _size):
     viewport_size[:] = size.width, size.height
 
 
+render_encoder = None
 def PyRenderer_drawInMTKView_(_self, _cmd, _view):
     #time.sleep(1)
+    global render_encoder
     view = ObjCInstance(_view)
     #view.setClearColor_((1.0,0.0,0.0,1.0))
     command_buffer = command_queue.commandBuffer()
@@ -55,36 +50,21 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
         render_encoder = command_buffer.renderCommandEncoderWithDescriptor_(renderpass_descriptor)
         
         render_encoder.label = "MyRenderEncoder"
-        
-        #view_port = (0.0, 0.0, viewport_size[0], viewport_size[1], 0.0, 1.0)
-        #render_encoder.setViewport_(view_port)
+    
+        view_port = (0.0, 0.0, viewport_size[0], viewport_size[1], 0.0, 1.0)
+        render_encoder.setViewport_(view_port)
         
         render_encoder.setRenderPipelineState_(pipeline_state)
         
-        '''
-        render_encoder.setVertexBytes_length_atIndex_(
-            id(triangle_position),
-            2*3, # sizeof(),
-            0 # AAPLVertexInputIndexVertices
-        )
-        
-        render_encoder.setVertexBytes_length_atIndex_(
-            id(triangle_color),
-            4*3, # sizeof(),
-            1 # AAPLVertexInputIndexVertices
-        )
-        
-        render_encoder.setVertexBytes_length_atIndex_(
-            id(viewport_size),
-            2, #sizeof(viewport_size),
-            2 # AAPLVertexInputIndexViewportSize
-        )
-        
         render_encoder.drawPrimitives_vertexStart_vertexCount_(
-            3, #MTLPrimitiveTypeTriangle,
+            4, #MTLPrimitiveTypeTriangle,
             0, 
-            3
-        )'''
+            int(get_time())
+        )
+        
+        p_time = c_float(get_time())
+        render_encoder.setFragmentBytes_length_atIndex_(byref(p_time), sys.getsizeof(p_time), 0)
+        
         
         render_encoder.endEncoding()
         command_buffer.presentDrawable_(view.currentDrawable())
@@ -104,12 +84,14 @@ PyRenderer = create_objc_class(
 )
 
 pipeline_state_descriptor=None
+reflection = None
+
 def init(view):
     print('init')
-    global device, pipeline_state, command_queue, pipeline_state_descriptor
+    global device, pipeline_state, command_queue, pipeline_state_descriptor, reflection, s_time
     device = view.device()
     _error  = c_void_p()
-     
+    
     default_library = device.newLibraryWithSource_options_error_(get_shader_source(), MTLCompileOptions.new(), _error)
     
     if _error.value:
@@ -129,7 +111,14 @@ def init(view):
     pipeline_state_descriptor.colorAttachments().objectAtIndexedSubscript(0).pixelFormat = view.colorPixelFormat()
      
     _error = c_void_p()
-    pipeline_state = device.newRenderPipelineStateWithDescriptor_error_(pipeline_state_descriptor, _error)
+    #pipeline_state = device.newRenderPipelineStateWithDescriptor_error_(pipeline_state_descriptor, _error)
+    _reflection = c_void_p() # MTLRenderPipelineReflection
+    pipeline_state = device.newRenderPipelineStateWithDescriptor_options_reflection_error_(
+        pipeline_state_descriptor,
+        3, # MTLPipelineOptionArgumentInfo+MTLPipelineOptionBufferTypeInfo
+        _reflection,
+        _error
+    )
     
     if not pipeline_state:
         print(pipeline_state_descriptor_p)
@@ -137,11 +126,14 @@ def init(view):
         error = ObjCInstance(_error)
         print(error)
         return 
-    print(pipeline_state) 
+    reflection = ObjCInstance(_reflection)
+    # print(pipeline_state, reflection) 
     command_queue = device.newCommandQueue()
     
     renderer = PyRenderer.new()
     #renderer.release()
+    s_time = time.time()
+    
     print('init end')
     return renderer
 

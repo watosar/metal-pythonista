@@ -1,0 +1,71 @@
+[
+  {
+    "nodes" : [
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{42, 0}, {163, 34}}",
+        "class" : "Slider",
+        "attributes" : {
+          "uuid" : "5AB7AC34-CB67-4A09-B467-5B268A33D45F",
+          "frame" : "{{37, 23}, {200, 34}}",
+          "value" : 0,
+          "class" : "Slider",
+          "name" : "seek_bar",
+          "flex" : "WB"
+        },
+        "selected" : false
+      },
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{207, 0}, {46, 33}}",
+        "class" : "TextField",
+        "attributes" : {
+          "flex" : "LB",
+          "font_size" : 17,
+          "frame" : "{{37, 1}, {200, 32}}",
+          "spellchecking_type" : "default",
+          "class" : "TextField",
+          "uuid" : "679917B5-8028-44D8-B3D5-BE83F76FD5E8",
+          "alignment" : "right",
+          "text" : "0.0",
+          "autocorrection_type" : "default",
+          "name" : "current_time",
+          "font_name" : "<System>"
+        },
+        "selected" : false
+      },
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{6, 0}, {35, 33}}",
+        "class" : "Button",
+        "attributes" : {
+          "image_name" : "iob:pause_256",
+          "frame" : "{{145, 1}, {80, 32}}",
+          "title" : "",
+          "uuid" : "55722D15-9C37-4BA7-9325-5D8E04ED1103",
+          "font_bold" : true,
+          "class" : "Button",
+          "font_size" : 15,
+          "name" : "button"
+        },
+        "selected" : true
+      }
+    ],
+    "frame" : "{{0, 0}, {259, 34}}",
+    "class" : "View",
+    "attributes" : {
+      "enabled" : true,
+      "background_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
+      "tint_color" : "RGBA(0.000000,0.478000,1.000000,1.000000)",
+      "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+      "flex" : ""
+    },
+    "selected" : false
+  }
+]

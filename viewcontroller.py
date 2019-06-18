@@ -10,9 +10,7 @@ def ViewController_viewDidLoad(_self, _cmd):
 def ViewController_viewWillAppear_(_self, _cmd, animated):
     print('will appear')
     view = ObjCInstance(_self).view()
-    print(view)
     renderer = py_renderer.init(view)
-    print(renderer)
     view.delegate = renderer
     view.preferredFramesPerSecond = 60
 
