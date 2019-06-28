@@ -21,27 +21,6 @@
         "nodes" : [
 
         ],
-        "frame" : "{{207, 0}, {46, 33}}",
-        "class" : "TextField",
-        "attributes" : {
-          "flex" : "LB",
-          "font_size" : 17,
-          "frame" : "{{37, 1}, {200, 32}}",
-          "spellchecking_type" : "default",
-          "class" : "TextField",
-          "uuid" : "679917B5-8028-44D8-B3D5-BE83F76FD5E8",
-          "alignment" : "right",
-          "text" : "0.0",
-          "autocorrection_type" : "default",
-          "name" : "current_time",
-          "font_name" : "<System>"
-        },
-        "selected" : false
-      },
-      {
-        "nodes" : [
-
-        ],
         "frame" : "{{6, 0}, {35, 33}}",
         "class" : "Button",
         "attributes" : {
@@ -51,19 +30,37 @@
           "uuid" : "55722D15-9C37-4BA7-9325-5D8E04ED1103",
           "font_bold" : true,
           "class" : "Button",
-          "font_size" : 15,
-          "name" : "button"
+          "name" : "button",
+          "font_size" : 15
         },
-        "selected" : true
+        "selected" : false
+      },
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{200, 2}, {50, 32}}",
+        "class" : "Label",
+        "attributes" : {
+          "name" : "current_time",
+          "text_color" : "RGBA(0.291667,0.494048,1.000000,1.000000)",
+          "frame" : "{{55, 1}, {150, 32}}",
+          "uuid" : "801DD718-0746-4F34-B9B4-739025F09E3E",
+          "class" : "Label",
+          "alignment" : "center",
+          "text" : "0.0",
+          "font_size" : 18,
+          "font_name" : "<System-Bold>"
+        },
+        "selected" : false
       }
     ],
     "frame" : "{{0, 0}, {259, 34}}",
     "class" : "View",
     "attributes" : {
       "enabled" : true,
-      "background_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
-      "tint_color" : "RGBA(0.000000,0.478000,1.000000,1.000000)",
       "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+      "background_color" : "RGBA(0.825843,0.825843,0.825843,1.000000)",
       "flex" : ""
     },
     "selected" : false

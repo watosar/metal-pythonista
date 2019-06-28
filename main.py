@@ -19,7 +19,7 @@ def create_view(x, y, w, h):
     return view
     
 
-@on_main_thread
+#@on_main_thread
 class MyView(ui.View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,7 +43,7 @@ class MyView(ui.View):
 
 
 my_view = MyView(background_color=(0,.3,0,1))
-my_view.present('full_screen', hide_title_bar=False,)
+my_view.present('full_screen', hide_title_bar=0,)
 my_view.initialize()
 
 seek_bar_view = ui.load_view('seek_bar')
