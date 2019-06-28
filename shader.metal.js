@@ -12,19 +12,18 @@ using namespace metal;
 
 typedef struct{
     float4 position [[position]];
-    
     float4 color;
-    
 } RasterizerData;
 
 
 vertex RasterizerData vertexShader(
+
     uint vertexID [[vertex_id]]
+    
 ){
 
     RasterizerData out;
-    float pi = 3.1415;
-    out.position = float4(sin(pi*0.6666*vertexID), cos(pi*0.6666*vertexID)-0.2, 0.0, 1.0);
+    out.position = float4(sin(2*M_PI_F/3.0*vertexID), cos(2*M_PI_F/3.0*vertexID)-0.2, 0.0, 1.0);
     
     if (vertexID == 0){
         out.color = float4(1.0,0.5,0.0,0.0);
@@ -48,6 +47,10 @@ fragment float4 fragmentShader(
     constant float *_time [[buffer(0)]]
     
 ){
+    
+    float time = float(* _time);
+    in.color.a = sin(M_PI_F*time);
     return in.color;
     
 }
+
