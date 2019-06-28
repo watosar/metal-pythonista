@@ -15,19 +15,19 @@ pipeline_state = None
 command_queue = None
 viewport_size = [750.0,750.0]
 
-time_buffer = None
-
-flg = False
 
 def get_shader_source():
     with open('shader.metal.js', 'r', encoding='utf-8') as f:
         shader = f.read()
     return shader
     
+    
 def get_time():
     return time.time()-s_time
+    
 
 def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, _view, _size):
+    # never be called
     global viewport_size
     print('size change')
     size = ObjCInstance(_size)
@@ -39,7 +39,7 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
     #time.sleep(1)
     global render_encoder
     view = ObjCInstance(_view)
-    #view.setClearColor_((1.0,0.0,0.0,1.0))
+    view.setClearColor_((1.0,0.0,0.0,1.0))
     command_buffer = command_queue.commandBuffer()
     command_buffer.label = 'MyCommand'
     
@@ -59,18 +59,21 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
         render_encoder.drawPrimitives_vertexStart_vertexCount_(
             4, #MTLPrimitiveTypeTriangle,
             0, 
-            int(get_time())
+            3,
         )
         
         p_time = c_float(get_time())
-        render_encoder.setFragmentBytes_length_atIndex_(byref(p_time), sys.getsizeof(p_time), 0)
-        
+        render_encoder.setFragmentBytes_length_atIndex_(
+            byref(p_time),
+            sys.getsizeof(p_time),
+            0
+        )
         
         render_encoder.endEncoding()
         command_buffer.presentDrawable_(view.currentDrawable())
         
     command_buffer.commit()
-    #print('draw end')
+
 
 PyRenderer = create_objc_class(
     'PyRenderer',
@@ -83,12 +86,10 @@ PyRenderer = create_objc_class(
     protocols = ['MTKViewDelegate']
 )
 
-pipeline_state_descriptor=None
-reflection = None
 
 def init(view):
     print('init')
-    global device, pipeline_state, command_queue, pipeline_state_descriptor, reflection, s_time
+    global device, pipeline_state, command_queue, s_time
     device = view.device()
     _error  = c_void_p()
     
@@ -103,7 +104,7 @@ def init(view):
     fragment_function = default_library.newFunctionWithName_("fragmentShader")
     
     pipeline_state_descriptor = MTLRenderPipelineDescriptor.alloc().init()
-    #pipeline_state_descriptor.release()
+    #pipeline_state_descriptor.autorelease()
     pipeline_state_descriptor.label = "Simple Pipeline"
     pipeline_state_descriptor.vertexFunction = vertex_function
     pipeline_state_descriptor.fragmentFunction = fragment_function
@@ -126,12 +127,13 @@ def init(view):
         error = ObjCInstance(_error)
         print(error)
         return 
+        
     reflection = ObjCInstance(_reflection)
-    # print(pipeline_state, reflection) 
+    print(pipeline_state, reflection) 
     command_queue = device.newCommandQueue()
     
-    renderer = PyRenderer.new()
-    #renderer.release()
+    renderer = PyRenderer.alloc().init()
+    #renderer.autorelease()
     s_time = time.time()
     
     print('init end')

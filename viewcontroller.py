@@ -1,18 +1,20 @@
 
 import ctypes
 from objc_util import *
-import renderer as py_renderer
+import renderer
 
 
 def ViewController_viewDidLoad(_self, _cmd):
+    # never be called
     print('did load')
+    
     
 def ViewController_viewWillAppear_(_self, _cmd, animated):
     print('will appear')
     view = ObjCInstance(_self).view()
-    renderer = py_renderer.init(view)
-    view.delegate = renderer
+    view.delegate = renderer.init(view)
     view.preferredFramesPerSecond = 60
+
 
 UIViewController = ObjCClass('UIViewController')
 ViewController = create_objc_class(
