@@ -3,7 +3,7 @@ import os
 from ctypes import *
 import sys
 import time
-
+import math
 load_framework('Metal')
 
 MTLCompileOptions, MTLRenderPipelineDescriptor, MTLRenderPipelineReflection = map(ObjCClass,('MTLCompileOptions','MTLRenderPipelineDescriptor', 'MTLRenderPipelineReflection'))
@@ -39,7 +39,7 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
     #time.sleep(1)
     global render_encoder
     view = ObjCInstance(_view)
-    view.setClearColor_((1.0,0.0,0.0,1.0))
+    #view.setClearColor_((1.0,0.0,0.0,1.0))
     command_buffer = command_queue.commandBuffer()
     command_buffer.label = 'MyCommand'
     
@@ -56,17 +56,17 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
         
         render_encoder.setRenderPipelineState_(pipeline_state)
         
+        p_time = c_float(get_time())
+        render_encoder.setFragmentBytes_length_atIndex_(
+            byref(p_time),
+            sizeof(p_time),
+            0
+        )
+        
         render_encoder.drawPrimitives_vertexStart_vertexCount_(
             4, #MTLPrimitiveTypeTriangle,
             0, 
             3,
-        )
-        
-        p_time = c_float(get_time())
-        render_encoder.setFragmentBytes_length_atIndex_(
-            byref(p_time),
-            sys.getsizeof(p_time),
-            0
         )
         
         render_encoder.endEncoding()
@@ -75,7 +75,7 @@ def PyRenderer_drawInMTKView_(_self, _cmd, _view):
     command_buffer.commit()
 
 
-PyRenderer = create_objc_class(
+PyRenderer = create_objc_class( 
     'PyRenderer',
     superclass = NSObject,
     methods=[

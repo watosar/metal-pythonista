@@ -26,13 +26,13 @@ vertex RasterizerData vertexShader(
     out.position = float4(sin(2*M_PI_F/3.0*vertexID), cos(2*M_PI_F/3.0*vertexID)-0.2, 0.0, 1.0);
     
     if (vertexID == 0){
-        out.color = float4(1.0,0.5,0.0,0.0);
+        out.color = float4(1.0,0.5,0.0,1.0);
     }
     else if (vertexID == 1){
-        out.color = float4(0.0,1.0,0.5,0.0);
+        out.color = float4(0.0,1.0,0.5,1.0);
     }
     else if (vertexID == 2){
-        out.color = float4(0.5,0.0,1.0,0.1);
+        out.color = float4(0.5,0.0,1.0,1.0);
     }
     
     
@@ -44,12 +44,11 @@ vertex RasterizerData vertexShader(
 fragment float4 fragmentShader(
 
     RasterizerData in [[stage_in]],
-    constant float *_time [[buffer(0)]]
+    constant float &time [[buffer(0)]]
     
 ){
     
-    float time = float(* _time);
-    in.color.a = sin(M_PI_F*time);
+    in.color.x += sin(time);
     return in.color;
     
 }
